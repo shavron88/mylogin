@@ -10,7 +10,6 @@ def handler(request):
     password=body.get("password")
 
 
-    # Demo credentials
     correct_username="admin"
     correct_password="password"
 
@@ -38,3 +37,6 @@ def handler(request):
         })
 
     }
+
+
+export default handler
