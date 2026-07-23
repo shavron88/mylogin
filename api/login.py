@@ -1,27 +1,46 @@
+from http.server import BaseHTTPRequestHandler
 import json
 
 
-def handler(request):
-    body = json.loads(request.body)
+class handler(BaseHTTPRequestHandler):
 
-    username = body.get("username")
-    password = body.get("password")
+    def do_POST(self):
 
-    correct_username = "admin"
-    correct_password = "password"
+        content_length = int(self.headers["Content-Length"])
 
-    if username == correct_username and password == correct_password:
-        return {
-            "statusCode": 200,
-            "body": json.dumps({
+        body = self.rfile.read(content_length)
+
+        data = json.loads(body)
+
+        username = data.get("username")
+        password = data.get("password")
+
+
+        if username == "admin" and password == "password":
+
+            response = {
                 "success": True
-            })
-        }
+            }
 
-    return {
-        "statusCode": 401,
-        "body": json.dumps({
-            "success": False,
-            "message": "Invalid username or password"
-        })
-    }
+            self.send_response(200)
+
+        else:
+
+            response = {
+                "success": False,
+                "message": "Invalid username or password"
+            }
+
+            self.send_response(401)
+
+
+        self.send_header(
+            "Content-type",
+            "application/json"
+        )
+
+        self.end_headers()
+
+        self.wfile.write(
+            json.dumps(response).encode()
+        )
